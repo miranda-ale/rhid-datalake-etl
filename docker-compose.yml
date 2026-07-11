@@ -1,0 +1,41 @@
+# ============================================================
+# RHID Datalake ETL — docker-compose de produção (Swarm/Dokploy)
+# ============================================================
+
+services:
+  rhid-etl:
+    image: ghcr.io/miranda-ale/rhid-datalake-etl:latest
+    container_name: rhid-etl
+
+    entrypoint: ["sleep", "infinity"]
+
+    environment:
+      - RHID_LOGIN=${RHID_LOGIN}
+      - RHID_PASSWORD=${RHID_PASSWORD}
+      - RHID_DOMAIN=${RHID_DOMAIN:-}
+      - RHID_BASE_URL=${RHID_BASE_URL:-https://www.rhid.com.br/v2/api.svc}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT:-http://datalake-minio:9000}
+      - MINIO_USER=${MINIO_USER}
+      - MINIO_PASSWORD=${MINIO_PASSWORD}
+      - MINIO_BUCKET=${MINIO_BUCKET:-rhid-datalake}
+      - RHID_BACKFILL_START=${RHID_BACKFILL_START:-2015-01}
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "rhid-etl"

@@ -94,7 +94,12 @@ async def main() -> None:
         ("feriados", entities.fetch_feriados),
         ("dispositivos", entities.fetch_dispositivos),
     ):
-        storage.put_json(f"raw/{name}/dt={dt}/data.json", await fetch())
+        try:
+            records = await fetch()
+        except Exception:
+            log.exception("Falha ao buscar %s — pulando snapshot do dia", name)
+            continue
+        storage.put_json(f"raw/{name}/dt={dt}/data.json", records)
 
     log.info(
         "Iniciando backfill de ponto para %d colaboradores desde %s",

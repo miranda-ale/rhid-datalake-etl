@@ -74,7 +74,11 @@ async def _snapshot_reference_entities(dt: str) -> list[dict]:
     colaboradores: list[dict] = []
     for name, fetch in REFERENCE_ENTITIES.items():
         log.info("Snapshot de %s", name)
-        records = await fetch()
+        try:
+            records = await fetch()
+        except Exception:
+            log.exception("Falha ao buscar %s — pulando snapshot do dia", name)
+            continue
         storage.put_json(f"raw/{name}/dt={dt}/data.json", records)
         if name == "colaboradores":
             colaboradores = records
