@@ -1,0 +1,29 @@
+[project]
+name = "rhid-datalake-etl"
+version = "1.0.0"
+description = "Extração periódica do RHID (ControlID) para o datalake MinIO — BHCL/Biowise"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+    "boto3>=1.34.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["rhid_client", "entities", "storage"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
